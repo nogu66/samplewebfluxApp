@@ -1,8 +1,13 @@
 package com.example.samplewebfluxApp;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -41,6 +46,24 @@ public class SampleRestController {
     public Mono<Post> post(@PathVariable int id) {
         Post post = repository.findById(id);
         return Mono.just(post);
+    }
+
+    @RequestMapping("/file")
+    public Mono<String> file() {
+        String result = "";
+        try {
+            ClassPathResource cr = new ClassPathResource("sample.txt");
+            InputStream is = cr.getInputStream();
+            InputStreamReader isr = new InputStreamReader(is, "utf-8");
+            BufferedReader br = new BufferedReader(isr);
+            String line;
+            while ((line = br.readLine()) != null) {
+                result += line;
+            }
+        } catch (IOException e) {
+            result = e.getMessage();
+        }
+        return Mono.just(result);
     }
 
     @PostConstruct
