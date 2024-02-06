@@ -8,9 +8,11 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import jakarta.annotation.PostConstruct;
 import reactor.core.publisher.Flux;
@@ -20,6 +22,13 @@ import reactor.core.publisher.Mono;
 public class SampleRestController {
     @Autowired
     PostRepository repository;
+
+    private final WebClient webClient;
+
+    public SampleRestController(WebClient.Builder builder) {
+        super();
+        webClient = builder.baseUrl("jsonplaceholder.typicode.com").build();
+    }
 
     @RequestMapping("/")
     public String hello() {
@@ -65,6 +74,20 @@ public class SampleRestController {
         }
         return Mono.just(result);
     }
+
+    @RequestMapping("/web/{id}")
+    public Mono<Post> web(@PathVariable int id) {
+        return this.webClient.get().uri("/posts/" + id).accept(MediaType.APPLICATION_JSON).retrieve()
+                .bodyToMono(Post.class);
+    }
+
+    @RequestMapping("/web")
+    public Flux<Post> web2() {
+        return this.webClient.get().uri("/posts").accept(MediaType.APPLICATION_JSON).retrieve()
+                .bodyToFlux(Post.class);
+    }
+    
+
 
     @PostConstruct
     public void init() {
