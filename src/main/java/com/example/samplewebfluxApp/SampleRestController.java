@@ -87,6 +87,11 @@ public class SampleRestController {
                 .bodyToFlux(Post.class);
     }
     
+    @RequestMapping("/webpost/{id}")
+    public Mono<Post> web3(@PathVariable int id) {
+        Post post = repository.findById(id);
+        return this.webClient.post().uri("/posts").accept(MediaType.APPLICATION_JSON).bodyValue(post).retrieve().bodyToMono(Post.class);
+    }
 
 
     @PostConstruct
