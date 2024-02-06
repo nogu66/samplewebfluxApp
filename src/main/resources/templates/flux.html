@@ -9,7 +9,7 @@
 		/>
 	</head>
 	<body class="container">
-		<h1 class="display-4">Flux Page</h1>
-		<p class="msg">This is Sample WebFlux page!!</p>
+		<h1 class="display-4" th:text="${title}"></h1>
+		<p class="msg" th:text="${msg}"></p>
 	</body>
 </html>
