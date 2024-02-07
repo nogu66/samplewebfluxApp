@@ -53,6 +53,7 @@ public class SampleRestController {
         return Flux.fromArray(posts.toArray());
     }
 
+    @CrossOrigin(origins = "http://localhost:3000/")
     @RequestMapping("/post/{id}")
     public Mono<Post> post(@PathVariable int id) {
         Post post = repository.findById(id);
